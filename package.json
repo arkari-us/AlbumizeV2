@@ -1,5 +1,13 @@
 {
-  "dependencies": {
-    "typescript": "^5.8.3"
-  }
+    "packageManager": "npm@11.5.2",
+    "workspaces": [
+        "packages/*",
+        "apps/*"
+    ],
+    "scripts": {
+        "dev": "turbo run dev",
+        "build": "turbo run build",
+        "test": "turbo run test",
+        "lint": "turbo run lint"
+    }
 }

@@ -1,0 +1,6 @@
+{
+    "name": "@albumize/typescript-base",
+    "exports": {
+        "base-config": "./tsconfig.json"
+    }
+}
