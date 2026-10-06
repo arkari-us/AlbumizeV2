@@ -1,0 +1,9 @@
+{
+	"compilerOptions": {
+		"target": "ES6",
+		"strict": true,
+		"module": "ESNext",
+		"skipLibCheck": true,
+		"outDir": "dist"
+	}
+}
