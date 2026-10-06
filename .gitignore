@@ -131,3 +131,4 @@ dist
 
 # turbo files
 .turbo
+.turbo/daemon
