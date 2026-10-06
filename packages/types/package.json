@@ -1,12 +1,13 @@
 {
-  "name": "@albumize/types",
-  "version": "1.0.0",
-  "description": "",
-  "license": "ISC",
-  "author": "",
-  "types": "./src/index.d.ts",
-  "exports": {
-    "Album": "./src/Album.ts",
-    "User": "./src/User.ts"
-  }
+	"name": "@albumize/types",
+	"packageManager": "npm@12.2.0",
+	"version": "1.0.0",
+	"description": "",
+	"license": "ISC",
+	"author": "",
+	"types": "./src/index.d.ts",
+	"exports": {
+		"Album": "./Album.ts",
+		"User": "./User.ts"
+	}
 }

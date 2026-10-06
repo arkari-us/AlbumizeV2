@@ -1,5 +1,6 @@
 {
 	"name": "backend",
+	"packageManager": "npm@12.2.0",
 	"version": "1.0.0",
 	"description": "Albumize backend",
 	"license": "ISC",
