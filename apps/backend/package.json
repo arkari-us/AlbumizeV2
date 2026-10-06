@@ -4,18 +4,22 @@
 	"description": "Albumize backend",
 	"license": "ISC",
 	"author": "",
-	"type": "module",
 	"main": "index.js",
 	"scripts": {
+		"build": "esbuild src/server.ts --bundle --outfile=dist/index.js --platform=node",
+		"start": "npm run build && node dist/index.js",
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"dependencies": {
-		"fastify": "^5.12.3",
-		"typescript": "^7.0.2"
+		"fastify": "^5.12.3"
 	},
 	"devDependencies": {
-		"@tsconfig/recommended": "^1.0.13",
 		"@types/node": "^26.5.0",
-		"tsx": "^4.23.13"
+		"tsx": "^4.23.13",
+		"typescript": "^7.0.2"
+	},
+	"allowScripts": {
+		"esbuild@0.28.2": true,
+		"fsevents@2.3.3": true
 	}
 }
