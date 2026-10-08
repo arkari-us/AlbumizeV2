@@ -5,9 +5,13 @@
 	"description": "",
 	"license": "ISC",
 	"author": "",
-	"types": "./src/index.d.ts",
+	"types": "./dist/index.d.ts",
 	"exports": {
-		"Album": "./Album.ts",
-		"User": "./User.ts"
+		".": {
+			"types": "./dist/index.d.ts"
+		}
+	},
+	"scripts": {
+		"build": "npx tsc -p tsconfig.json"
 	}
 }

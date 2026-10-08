@@ -12,6 +12,7 @@
 	},
 	"dependencies": {
 		"react": "^19.1.0",
-		"typescript": "^7.0.2"
+		"typescript": "^7.0.2",
+		"@albumize/types": "*"
 	}
 }
