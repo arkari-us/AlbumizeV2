@@ -6,5 +6,12 @@
 	],
 	"dependencies": {
 		"turbo": "^2.11.7"
+	},
+	"scripts": {
+		"build": "turbo build"
+	},
+	"allowScripts": {
+		"esbuild@0.28.2": true,
+		"fsevents@2.3.3": true
 	}
 }
