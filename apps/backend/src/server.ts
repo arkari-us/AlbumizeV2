@@ -1,13 +1,19 @@
 import Fastify from "fastify";
+import fp from "fastify-plugin";
+
+import app from "./app";
 
 const fastify = Fastify({
-	logger: true,
+	logger: true, // TODO: update to log to database
+	connectionTimeout: 120000,
+	requestTimeout: 60000,
+	keepAliveTimeout: 10000,
+	http: {
+		headersTimeout: 15000,
+	},
 });
 
-fastify.get("/", async (request, reply) => {
-	console.log("request", request);
-	reply.send({ hello: "world" });
-});
+fastify.register(fp(app));
 
 fastify.listen({ port: 3000 }, function (err, address) {
 	if (err) {

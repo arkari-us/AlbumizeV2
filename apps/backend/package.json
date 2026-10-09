@@ -12,11 +12,19 @@
 		"test": "echo \"Error: no test specified\" && exit 1"
 	},
 	"dependencies": {
+		"@albumize/common": "*",
+		"@fastify/cookie": "^11.1.3",
+		"@fastify/session": "^11.1.3",
+		"@fastify/type-provider-typebox": "^6.1.0",
 		"fastify": "^5.12.3",
-		"@albumize/types": "*"
+		"fastify-plugin": "^6.0.0",
+		"mongoose": "^9.11.1",
+		"qs": "^6.16.0",
+		"url-parse": "^1.5.10"
 	},
 	"devDependencies": {
 		"@types/node": "^26.5.0",
+		"@types/qs": "^6.15.1",
 		"tsx": "^4.23.13",
 		"typescript": "^7.0.2"
 	}
