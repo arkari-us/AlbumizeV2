@@ -20,11 +20,12 @@ const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
 					.send({ err: "Invalid session", status: 401 });
 			}
 
-			request.session.accessToken = await refreshApiToken(
+			const newTokenData = await refreshApiToken(
 				request.session.refreshToken ?? "",
 				request.session.userId ?? "",
 			);
-			request.session.expires = new Date().getTime() + 60 * 60 * 1000; //one hour in milliseconds
+			request.session.accessToken = newTokenData.accessToken;
+			request.session.expires = newTokenData.expires;
 		}
 	};
 
@@ -55,7 +56,7 @@ const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
 					accessToken: spotifyKeys.data.access_token,
 					expires: new Date().getTime() + 60 * 60 * 1000, //one hour in milliseconds
 				};
-				return keys.accessToken;
+				return keys;
 			})
 			.catch((err) => {
 				console.log(
