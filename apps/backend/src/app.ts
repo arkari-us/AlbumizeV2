@@ -2,6 +2,8 @@ import { FastifyError, FastifyInstance, FastifyPluginOptions } from "fastify";
 import { userRoutes } from "./routes/user";
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifySession } from "@fastify/session";
+import middie from "@fastify/middie";
+import cors from "@fastify/cors";
 
 declare module "fastify" {
 	interface Session {
@@ -10,6 +12,7 @@ declare module "fastify" {
 		accessToken?: string;
 		refreshToken?: string;
 		authState?: string;
+		expires?: number;
 	}
 }
 
@@ -21,6 +24,12 @@ export default async function app(
 	if (!sessionSecret) {
 		throw new Error("SESSION_SECRET environment variable is required");
 	}
+
+	// Register middleware
+	await fastify.register(middie);
+	await fastify.register(cors, {
+		origin: true,
+	});
 
 	// Register session management plugins
 	fastify.register(fastifyCookie, {
