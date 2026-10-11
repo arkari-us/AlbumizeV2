@@ -89,6 +89,7 @@ export const userRoutes: FastifyPluginAsyncTypebox = async function (
 							spotifyKeys.data.refresh_token;
 						request.session.accessToken =
 							spotifyKeys.data.access_token;
+						request.session.expires = spotifyKeys.data.expires;
 
 						const keys = {
 							userid: userid,
