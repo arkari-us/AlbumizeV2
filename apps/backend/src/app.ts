@@ -41,15 +41,15 @@ export default async function app(
 			maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
 			secure: true,
 			httpOnly: true,
-			path: "/albumize",
-			domain: "arkari.us",
+			path: process.env.COOKIE_PATH,
+			domain: process.env.COOKIE_DOMAIN,
 		},
 	});
 
 	// Register route plugins
-	fastify.register(userRoutes, { prefix: "/user" });
+	fastify.register(userRoutes, { prefix: process.env.API_PATH + "/user" });
 
-	fastify.get("/", async (request, reply) => {
+	fastify.get("/api", async (request, reply) => {
 		console.log("request", request);
 		reply.send({ hello: "world" });
 	});

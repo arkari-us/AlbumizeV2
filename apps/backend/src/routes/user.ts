@@ -28,7 +28,7 @@ export const userRoutes: FastifyPluginAsyncTypebox = async function (
 			response_type: "code",
 			client_id: process.env.CLIENT_ID,
 			scope: "playlist-read-private user-read-private playlist-modify-private",
-			redirect_uri: process.env.CALLBACK_URI,
+			redirect_uri: process.env.REDIRECT_URI,
 			state: state,
 		});
 
@@ -37,7 +37,7 @@ export const userRoutes: FastifyPluginAsyncTypebox = async function (
 	});
 
 	fastify.get("/auth/callback", async (request, reply) => {
-		const query = querystring.parse(new URL(request.url).search);
+		const query = querystring.parse(request.url.split("?")[1]);
 
 		if (
 			!request.session.authState ||
@@ -59,7 +59,7 @@ export const userRoutes: FastifyPluginAsyncTypebox = async function (
 		const postQuery = {
 			grant_type: "authorization_code",
 			code: authCode,
-			redirect_uri: process.env.CALLBACK_URI,
+			redirect_uri: process.env.REDIRECT_URI,
 			client_id: process.env.CLIENT_ID,
 			client_secret: process.env.CLIENT_SECRET,
 		};
