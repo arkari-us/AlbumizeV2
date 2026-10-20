@@ -9,7 +9,6 @@ const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
 		request: FastifyRequest,
 		reply: FastifyReply,
 	): Promise<FastifyReply | void> => {
-		// TODO: add param types
 		if (!request.session || !request.session.userId) {
 			return reply.status(401).send({ err: "No session", status: 401 });
 		}

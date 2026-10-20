@@ -27,7 +27,7 @@ export default async function app(
 	}
 
 	// Set up mongodb connection
-	await mongoose.set("debug", true);
+	// await mongoose.set("debug", true);
 	const db = await mongoose.connect(
 		process.env.MONGO_URI || "mongodb://127.0.0.1",
 		{
