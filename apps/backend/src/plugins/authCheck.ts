@@ -1,11 +1,14 @@
 import { FastifyPluginAsyncTypebox } from "@fastify/type-provider-typebox";
+import { FastifyReply, FastifyRequest } from "fastify";
 import { User } from "../schemas/User";
 import querystring from "node:querystring";
 import axios from "axios";
 
 const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
-	const authCheck = async (request, reply) => {
-		// TODO: add param types
+	const authCheck = async (
+		request: FastifyRequest,
+		reply: FastifyReply,
+	): Promise<FastifyReply | void> => {
 		if (!request.session || !request.session.userId) {
 			return reply.status(401).send({ err: "No session", status: 401 });
 		}
@@ -38,12 +41,10 @@ const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
 		const postQuery = {
 			grant_type: "refresh_token",
 			refresh_token: refreshToken,
-			redirect_uri: process.env.CALLBACK_URI,
+			redirect_uri: process.env.REDIRECT_URI,
 			client_id: process.env.CLIENT_ID,
 			client_secret: process.env.CLIENT_SECRET,
 		};
-
-		console.log("Expired API token, refreshing");
 
 		return axios
 			.post(

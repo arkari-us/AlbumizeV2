@@ -28,16 +28,18 @@ export const userRoutes: FastifyPluginAsyncTypebox = async function (
 			response_type: "code",
 			client_id: process.env.CLIENT_ID,
 			scope: "playlist-read-private user-read-private playlist-modify-private",
-			redirect_uri: process.env.CALLBACK_URI,
+			redirect_uri: process.env.REDIRECT_URI,
 			state: state,
 		});
 
 		request.session.authState = state;
-		reply.redirect("https://accounts.spotify.com/authorize?" + query);
+		return reply.redirect(
+			"https://accounts.spotify.com/authorize?" + query,
+		);
 	});
 
 	fastify.get("/auth/callback", async (request, reply) => {
-		const query = querystring.parse(new URL(request.url).search);
+		const query = querystring.parse(request.url.split("?")[1]);
 
 		if (
 			!request.session.authState ||
@@ -59,62 +61,69 @@ export const userRoutes: FastifyPluginAsyncTypebox = async function (
 		const postQuery = {
 			grant_type: "authorization_code",
 			code: authCode,
-			redirect_uri: process.env.CALLBACK_URI,
+			redirect_uri: process.env.REDIRECT_URI,
 			client_id: process.env.CLIENT_ID,
 			client_secret: process.env.CLIENT_SECRET,
 		};
 
-		axios
-			.post(
-				"https://accounts.spotify.com/api/token",
-				querystring.stringify(postQuery),
-				{ headers },
-			)
-			.then((spotifyKeys) => {
-				//get user id (to be used as mongodb _id) and username (to display on front end)
-				axios
-					.get("https://api.spotify.com/v1/me", {
-						headers: {
-							Accept: "application/json",
-							"Content-Type": "application/json",
-							Authorization:
-								"Bearer " + spotifyKeys.data.access_token,
-						},
-					})
-					.then(async (profile) => {
-						const userid = profile.data.id;
-						const username = profile.data.display_name;
+		const spotifyKeys = await axios.post(
+			"https://accounts.spotify.com/api/token",
+			querystring.stringify(postQuery),
+			{ headers },
+		);
 
-						request.session.refreshToken =
-							spotifyKeys.data.refresh_token;
-						request.session.accessToken =
-							spotifyKeys.data.access_token;
-						request.session.expires = spotifyKeys.data.expires;
-
-						const keys = {
-							userid: userid,
-							username: username,
-							expires: new Date().getTime() + 60 * 60 * 1000, //one hour in milliseconds
-						};
-
-						const doc = await User.findOneAndUpdate(
-							{ userid },
-							{ $set: keys },
-							upsertOptions,
-						);
-						if (doc) {
-							request.session.userId = userid;
-							request.session.userName = username;
-
-							return reply.redirect(process.env.CLIENT_URI ?? "");
-						}
-					})
-					.catch((err) => {
-						console.log(err);
-					});
-			})
-			.catch((err) => {
-				return reply.status(500).send({ err: err, status: 500 });
+		if (!spotifyKeys.data.access_token || !spotifyKeys.data.refresh_token) {
+			return reply.status(500).send({
+				err: "Error requesting Spotify access tokens",
+				status: 500,
 			});
+		}
+
+		//get user id (to be used as mongodb _id) and username (to display on front end)
+		const profile = await axios.get("https://api.spotify.com/v1/me", {
+			headers: {
+				Accept: "application/json",
+				"Content-Type": "application/json",
+				Authorization: "Bearer " + spotifyKeys.data.access_token,
+			},
+		});
+
+		if (!profile.data.id || !profile.data.display_name) {
+			return reply.status(500).send({
+				err: "Error requesting Spotify user profile",
+				status: 500,
+			});
+		}
+
+		const userid = profile.data.id;
+		const username = profile.data.display_name;
+
+		request.session.refreshToken = spotifyKeys.data.refresh_token;
+		request.session.accessToken = spotifyKeys.data.access_token;
+		request.session.expires = spotifyKeys.data.expires;
+
+		const keys = {
+			userid: userid,
+			username: username,
+			expires: new Date().getTime() + 60 * 60 * 1000, //one hour in milliseconds
+		};
+
+		const doc = await User.findOneAndUpdate(
+			{ userid },
+			{ $set: keys },
+			upsertOptions,
+		);
+
+		if (doc) {
+			request.session.userId = userid;
+			request.session.userName = username;
+
+			return reply.redirect(process.env.CLIENT_URI ?? "");
+		} else {
+			return reply.status(500).send({
+				err: "Failed to insert/update user record",
+				status: 500,
+			});
+		}
 	});
 };

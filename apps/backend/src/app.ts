@@ -2,6 +2,7 @@ import { FastifyError, FastifyInstance, FastifyPluginOptions } from "fastify";
 import { userRoutes } from "./routes/user";
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifySession } from "@fastify/session";
+import mongoose from "mongoose";
 import middie from "@fastify/middie";
 import cors from "@fastify/cors";
 
@@ -25,6 +26,15 @@ export default async function app(
 		throw new Error("SESSION_SECRET environment variable is required");
 	}
 
+	// Set up mongodb connection
+	// await mongoose.set("debug", true);
+	const db = await mongoose.connect(
+		process.env.MONGO_URI || "mongodb://127.0.0.1",
+		{
+			dbName: process.env.MONGO_DB_NAME || "albumize",
+		},
+	);
+
 	// Register middleware
 	await fastify.register(middie);
 	await fastify.register(cors, {
@@ -41,16 +51,15 @@ export default async function app(
 			maxAge: 1000 * 60 * 60 * 24 * 7, // 1 week
 			secure: true,
 			httpOnly: true,
-			path: "/albumize",
-			domain: "arkari.us",
+			path: process.env.COOKIE_PATH,
+			domain: process.env.COOKIE_DOMAIN,
 		},
 	});
 
 	// Register route plugins
-	fastify.register(userRoutes, { prefix: "/user" });
+	fastify.register(userRoutes, { prefix: process.env.API_PATH + "/user" });
 
-	fastify.get("/", async (request, reply) => {
-		console.log("request", request);
-		reply.send({ hello: "world" });
+	fastify.get("/api", async (request, reply) => {
+		return reply.send({ hello: "world" });
 	});
 }
