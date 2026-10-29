@@ -1,5 +1,5 @@
 import { FastifyError, FastifyInstance, FastifyPluginOptions } from "fastify";
-import { userRoutes, albumRoutes } from "./routes";
+import { userRoutes, albumRoutes, playlistRoutes } from "./routes";
 import { fastifyCookie } from "@fastify/cookie";
 import { fastifySession } from "@fastify/session";
 import mongoose from "mongoose";
@@ -59,6 +59,9 @@ export default async function app(
 	// Register route plugins
 	fastify.register(userRoutes, { prefix: process.env.API_PATH + "/user" });
 	fastify.register(albumRoutes, { prefix: process.env.API_PATH + "/albums" });
+	fastify.register(playlistRoutes, {
+		prefix: process.env.API_PATH + "/playlist",
+	});
 
 	fastify.get("/api", async (request, reply) => {
 		return reply.send({ hello: "world" });
