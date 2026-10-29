@@ -4,7 +4,10 @@ import { User } from "../schemas/User";
 import querystring from "node:querystring";
 import axios from "axios";
 
-const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
+export const authCheck: FastifyPluginAsyncTypebox = async function (
+	fastify,
+	opts,
+) {
 	const authCheck = async (
 		request: FastifyRequest,
 		reply: FastifyReply,
@@ -55,7 +58,7 @@ const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
 			.then((spotifyKeys) => {
 				const keys = {
 					accessToken: spotifyKeys.data.access_token,
-					expires: new Date().getTime() + 60 * 60 * 1000, //one hour in milliseconds
+					expires: new Date().getTime() + spotifyKeys.data.expires_in,
 				};
 				return keys;
 			})
