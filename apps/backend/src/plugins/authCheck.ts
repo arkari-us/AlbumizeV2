@@ -4,7 +4,10 @@ import { User } from "../schemas/User";
 import querystring from "node:querystring";
 import axios from "axios";
 
-const authCheck: FastifyPluginAsyncTypebox = async function (fastify, opts) {
+export const authCheck: FastifyPluginAsyncTypebox = async function (
+	fastify,
+	opts,
+) {
 	const authCheck = async (
 		request: FastifyRequest,
 		reply: FastifyReply,
